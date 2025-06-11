@@ -24,18 +24,36 @@ jobs:
       - name: 📦 Install All-Contributors CLI
         run: npm install -g all-contributors-cli
 
+      - name: 🔍 Debug File Structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          echo "README.md exists: $(test -f README.md && echo 'YES' || echo 'NO')"
+
       - name: 🤝 Add Contributor
         run: |
-          # Add the contributor
-          npx all-contributors add ${{ github.event.pull_request.user.login }} code
-
-          # Generate the updated README
-          npx all-contributors generate
+          # Check if contributor already exists
+          if grep -q "${{ github.event.pull_request.user.login }}" .all-contributorsrc; then
+            echo "✅ Contributor ${{ github.event.pull_request.user.login }} already exists"
+            echo "contributor_added=false" >> $GITHUB_OUTPUT
+          else
+            echo "➕ Adding new contributor: ${{ github.event.pull_request.user.login }}"
+            
+            # Add the contributor (detect contribution type from PR files)
+            npx all-contributors add ${{ github.event.pull_request.user.login }} code
+            
+            # Generate the updated README
+            npx all-contributors generate
+            
+            echo "contributor_added=true" >> $GITHUB_OUTPUT
+          fi
+        id: add_contributor
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📝 Create PR for Contributor Addition
-        if: steps.add-contributor.outputs.changed == 'true'
+        if: steps.add_contributor.outputs.contributor_added == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
