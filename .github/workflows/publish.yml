@@ -136,10 +136,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          # Commit version bump
-          git add package.json
-          git commit -m "chore: bump version to ${{ steps.version_bump.outputs.new }}"
-
           # Check if tag already exists and fail if it does
           if git rev-parse "v${{ steps.version_bump.outputs.new }}" >/dev/null 2>&1; then
             echo "❌ ERROR: Tag v${{ steps.version_bump.outputs.new }} already exists!"
@@ -148,10 +144,38 @@ jobs:
             exit 1
           fi
 
-          # Create and push tag
           git tag -a "v${{ steps.version_bump.outputs.new }}" -m "Release v${{ steps.version_bump.outputs.new }}"
-          git push origin HEAD:${{ github.ref_name }}
           git push origin "v${{ steps.version_bump.outputs.new }}"
+
+          echo "✅ Git tag v${{ steps.version_bump.outputs.new }} created and pushed"
+          echo "📋 Note: Version bump was not committed to master due to branch protection"
+
+      - name: 📝 Create Version Bump PR
+        if: ${{ !inputs.dry_run }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version to ${{ steps.version_bump.outputs.new }}"
+          title: "🔄 Version bump to v${{ steps.version_bump.outputs.new }}"
+          body: |
+            ## 🔄 Automated Version Bump
+
+            This PR was automatically created after publishing v${{ steps.version_bump.outputs.new }}.
+
+            **Changes:**
+            - Updated `package.json` version: ${{ steps.current_version.outputs.current }} → ${{ steps.version_bump.outputs.new }}
+
+            **Already Published:**
+            - ✅ NPM: `babel-plugin-react-data-testid-generator@${{ steps.version_bump.outputs.new }}`
+            - ✅ Git Tag: `v${{ steps.version_bump.outputs.new }}`
+            - ✅ GitHub Release: `v${{ steps.version_bump.outputs.new }}`
+
+            **Action Required:** Merge this PR to sync the repository version.
+
+            ---
+            *This PR was automatically created by the publish workflow*
+          branch: version-bump/v${{ steps.version_bump.outputs.new }}
+          delete-branch: true
 
       - name: 🎉 Create GitHub Release
         if: ${{ !inputs.dry_run }}
