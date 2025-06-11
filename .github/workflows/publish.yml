@@ -144,7 +144,6 @@ jobs:
             exit 1
           fi
 
-          # Create and push tag (without committing version bump to master)
           git tag -a "v${{ steps.version_bump.outputs.new }}" -m "Release v${{ steps.version_bump.outputs.new }}"
           git push origin "v${{ steps.version_bump.outputs.new }}"
 
