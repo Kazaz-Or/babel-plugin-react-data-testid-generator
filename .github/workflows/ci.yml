@@ -1,0 +1,109 @@
+name: 🔍 PR Validations
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22.16.0"
+
+jobs:
+  check-ready:
+    name: 🚦 Check PR Status
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - name: 🚦 Check if PR is ready
+        id: check
+        run: |
+          if [[ "${{ github.event.pull_request.draft }}" == "true" ]]; then
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "🚧 PR is in draft mode, skipping validation"
+          else
+            echo "ready=true" >> $GITHUB_OUTPUT
+            echo "✅ PR is ready for validation"
+          fi
+
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    needs: check-ready
+    if: needs.check-ready.outputs.ready == 'true'
+    strategy:
+      matrix:
+        check: [lint, typecheck, format-check, test, build]
+
+    steps:
+      - name: 📂 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🔍 Run Lint
+        if: matrix.check == 'lint'
+        run: yarn lint
+
+      - name: 📝 Run Type Check
+        if: matrix.check == 'typecheck'
+        run: yarn tsc --noEmit
+
+      - name: 🎨 Check Code Formatting
+        if: matrix.check == 'format-check'
+        run: yarn fmt:check
+
+      - name: 🧪 Run Tests with Coverage
+        if: matrix.check == 'test'
+        run: yarn test:coverage
+
+      - name: 🏗️ Run Build
+        if: matrix.check == 'build'
+        run: yarn build
+
+  summary:
+    name: 📋 PR Summary
+    runs-on: ubuntu-latest
+    needs: [check-ready, checks]
+    if: always() && needs.check-ready.outputs.ready == 'true'
+
+    steps:
+      - name: 📋 Generate Summary
+        run: |
+          echo "## 🎯 PR Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # All checks results
+          echo "### ⚡ Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| All Checks (Lint, TypeCheck, Format, Test + Coverage, Build) | ${{ needs.checks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Overall status
+          if [[ "${{ needs.checks.result }}" == "success" ]]; then
+            echo "### ✅ All Checks Passed!" >> $GITHUB_STEP_SUMMARY
+            echo "Your babel plugin is ready for merge! 🚀" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Code style and formatting" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ TypeScript compilation" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ All tests passing with coverage ≥80%" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Snapshot tests match expected output" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Some Checks Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the failed checks above and fix any issues." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Note**: If tests fail due to snapshots, run \`yarn test -- --updateSnapshot\` locally if the changes are intentional." >> $GITHUB_STEP_SUMMARY
+          fi

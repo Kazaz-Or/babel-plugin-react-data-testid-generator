@@ -1,4 +1,10 @@
-dest
-coverage
-.github
-package.json
+# Ignore snapshots
+**/__snapshots__/
+*.snap
+
+# Ignore build output
+dist/
+node_modules/
+
+# Ignore example app
+example/ 
