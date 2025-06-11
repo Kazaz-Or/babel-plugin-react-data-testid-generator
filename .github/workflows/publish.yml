@@ -26,8 +26,18 @@ jobs:
   publish:
     name: 📦 Build & Publish Package
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
+      - name: 🔒 Verify Release Branch
+        run: |
+          if [[ "${{ github.ref_name }}" != "master" ]]; then
+            echo "❌ ERROR: Releases can only be created from the 'master' branch!"
+            echo "Current branch: ${{ github.ref_name }}"
+            echo "Please switch to master branch and try again."
+            exit 1
+          fi
+          echo "✅ Confirmed: Running on master branch"
       - name: 📂 Checkout Repository
         uses: actions/checkout@v4
         with:
