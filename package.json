@@ -1,57 +1,56 @@
 {
-  "name": "babel-plugin-react-data-testid",
-  "version": "0.2.0",
-  "description": "babel plugin for react data-testid attributes",
+  "name": "babel-plugin-react-data-testid-generator",
+  "version": "0.1.0",
+  "description": "Enhanced babel plugin for automatic React data-testid generation with unique IDs and class component support",
   "license": "MIT",
-  "repository": "akameco/babel-plugin-react-data-testid",
-  "author": "akameco <akameco.t@gmail.com> (https://akameco.github.io)",
+  "repository": "Kazaz-Or/babel-plugin-react-data-testid-generator",
+  "author": "Or Kazaz <kazazor@gmail.com>",
   "files": [
-    "dest"
+    "dist"
   ],
-  "main": "dest/index.js",
-  "types": "dest/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "babel",
     "babel plugin",
     "react",
     "data-test",
-    "data-testid"
+    "data-testid",
+    "testing",
+    "automation",
+    "unique-ids",
+    "class-components"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=16"
   },
   "scripts": {
-    "prebuild": "del dest",
+    "prebuild": "del dist",
     "build": "tsc",
-    "prepublish": "yarn build && del dest/**/*.test.*",
-    "fmt": "prettier --write .",
+    "prepublish": "yarn build && del dist/**/*.test.*",
+    "fmt": "prettier --write src/**/*",
+    "fmt:check": "prettier --check src/**/*",
     "lint": "eslint src/**/*.ts",
     "test": "jest",
-    "test:ci": "jest --coverage --ci --runInBand"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --ci --runInBand",
+    "test:update-snapshots": "jest --updateSnapshot"
   },
   "dependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/types": "^7.9.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "@babel/core": "^7.25.0",
+    "@babel/types": "^7.25.0"
   },
   "devDependencies": {
-    "@akameco/tsconfig": "^0.4.0",
-    "@types/jest": "^25.2.1",
-    "@types/node": "^13.11.0",
-    "babel-log": "^2.0.0",
-    "babel-plugin-tester": "^9.0.0",
-    "del-cli": "^3.0.0",
-    "eslint": "^6.8.0",
-    "eslint-config-precure": "^5.4.0",
-    "husky": "^4.2.3",
-    "jest": "^25.2.7",
-    "lint-staged": "^10.1.2",
-    "prettier": "^2.0.4",
-    "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
+    "@types/jest": "29.5.14",
+    "@types/node": "22.0.0",
+    "babel-plugin-tester": "11.0.4",
+    "del-cli": "6.0.0",
+    "eslint": "8.57.0",
+    "@typescript-eslint/eslint-plugin": "7.18.0",
+    "@typescript-eslint/parser": "7.18.0",
+    "jest": "29.7.0",
+    "prettier": "3.3.3",
+    "ts-jest": "29.2.5",
+    "typescript": "5.4.5"
   }
 }

@@ -1,115 +1,464 @@
-# babel-plugin-react-data-testid
+# babel-plugin-react-data-testid-generator
 
-[![Build Status](https://travis-ci.com/akameco/babel-plugin-react-data-testid.svg?branch=master)](https://travis-ci.com/akameco/babel-plugin-react-data-testid)
-[![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![npm version](https://badge.fury.io/js/babel-plugin-react-data-testid-generator.svg)](https://badge.fury.io/js/babel-plugin-react-data-testid-generator)
+[![Build Status](https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator/workflows/🔍%20PR%20Validations/badge.svg)](https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator/actions)
+[![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen.svg)](https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator)
 
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+> 🧪 **Enhanced Babel plugin for automatic React data-testid generation with unique IDs and comprehensive component support**
 
-> babel plugin for react data-testid attributes
+Automatically adds `data-testid` attributes to your React components during the build process, making it easier to write reliable end-to-end tests. Features **component-scoped unique counters** for predictable, collision-free test IDs.
 
-## Install
+## ✨ Features
 
+- 🎯 **Automatic data-testid generation** for functional and class components
+- 🔢 **Component-scoped unique counters** to prevent ID conflicts
+- 📊 **Predictable naming** like `ComponentName.element`, `ComponentName.element2`
+- 🎭 **Full React support**: Functional components, arrow functions, class components
+- 🔧 **Customizable attributes** (data-testid, data-cy, data-test-id, etc.)
+- 🚀 **Zero configuration** - works out of the box
+- 📦 **TypeScript support** with full type definitions
+- 🌐 **Framework agnostic** - works with Next.js, Vite, CRA, and more
+- 🔄 **JSX member expressions** support (`Modal.Header` → `ComponentName.Header`)
+- 🛡️ **Never overrides existing attributes**
+
+## 🚀 Installation
+
+```bash
+npm install --save-dev babel-plugin-react-data-testid-generator
+# or
+yarn add --dev babel-plugin-react-data-testid-generator
 ```
-$ npm install --save-dev babel-plugin-react-data-testid
-$ yarn add --dev babel-plugin-react-data-testid
-```
 
-## Usage
+## 📖 Usage
 
-.babelrc.json
+### Basic Setup
+
+Add the plugin to your `.babelrc.json` or `babel.config.js`:
 
 ```json
 {
-  "plugins": ["react-data-testid"]
+  "plugins": ["babel-plugin-react-data-testid-generator"]
 }
 ```
 
-Before:
+### Framework-Specific Setup
 
-```js
-function Div() {
-  return <div />
-}
+<details>
+<summary><strong>🚀 Next.js</strong></summary>
 
-const Hello = () => <div>hello</div>
-```
-
-After:
-
-```js
-function Div() {
-  return <div data-testid="Div" />
-}
-
-const Hello = () => <div data-testid="Hello">hello</div>
-```
-
-_Note_: Does not support class components.
-
-### Options
-
-#### attributes
-
-By default attributes with name `data-testid` will be added. You can also define custom attribute names via plugin options in your babel config.
-
-.babelrc.json
+Create `.babelrc.json` in your project root:
 
 ```json
 {
-  "plugins": [["react-data-testid", { "attributes": ["data-cy"] }]]
-}
-```
-
-```js
-function Div() {
-  return <div />
-}
-
-const Hello = () => <div>hello</div>
-```
-
-After:
-
-```js
-function Div() {
-  return <div data-cy="Div" />
-}
-
-const Hello = () => <div data-cy="Hello">hello</div>
-```
-
-If you need to add multiple attributes, you can define an attributes array as follows:
-
-```json
-{
+  "presets": ["next/babel"],
   "plugins": [
-    ["react-data-testid", { "attributes": ["data-testid", "data-cy"] }]
+    [
+      "babel-plugin-react-data-testid-generator",
+      {
+        "attributes": ["data-testid"]
+      }
+    ]
   ]
 }
 ```
 
-## Contributors ✨
+</details>
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+<details>
+<summary><strong>⚡ Vite</strong></summary>
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="http://akameco.github.io"><img src="https://avatars2.githubusercontent.com/u/4002137?v=4" width="100px;" alt=""/><br /><sub><b>akameco</b></sub></a><br /><a href="https://github.com/akameco/babel-plugin-react-data-testid/commits?author=akameco" title="Code">💻</a> <a href="https://github.com/akameco/babel-plugin-react-data-testid/commits?author=akameco" title="Documentation">📖</a> <a href="#infra-akameco" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/akameco/babel-plugin-react-data-testid/commits?author=akameco" title="Tests">⚠️</a></td>
-  </tr>
-</table>
+Configure in `vite.config.js`:
 
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
+```javascript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+export default defineConfig({
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          [
+            "babel-plugin-react-data-testid-generator",
+            {
+              attributes: ["data-testid"],
+            },
+          ],
+        ],
+      },
+    }),
+  ],
+});
+```
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+</details>
 
-## License
+<details>
+<summary><strong>📦 Create React App</strong></summary>
 
-MIT © [akameco](http://akameco.github.io)
+**Note**: CRA v5+ ignores custom babel configs. Use Next.js or Vite instead, or eject from CRA.
+
+For ejected CRA, add to `babel.config.js`:
+
+```javascript
+module.exports = {
+  presets: ["react-app"],
+  plugins: [
+    [
+      "babel-plugin-react-data-testid-generator",
+      {
+        attributes: ["data-testid"],
+      },
+    ],
+  ],
+};
+```
+
+</details>
+
+### With Custom Attributes
+
+```json
+{
+  "plugins": [
+    [
+      "babel-plugin-react-data-testid-generator",
+      {
+        "attributes": ["data-testid", "data-cy"]
+      }
+    ]
+  ]
+}
+```
+
+## 🔄 Transformations
+
+### Functional Components
+
+**Before:**
+
+```jsx
+function UserCard({ name }) {
+  return (
+    <div>
+      <h3>{name}</h3>
+      <button>Follow</button>
+      <button>Message</button>
+    </div>
+  );
+}
+```
+
+**After:**
+
+```jsx
+function UserCard({ name }) {
+  return (
+    <div data-testid="UserCard.div">
+      <h3 data-testid="UserCard.h3">{name}</h3>
+      <button data-testid="UserCard.button">Follow</button>
+      <button data-testid="UserCard.button2">Message</button>
+    </div>
+  );
+}
+```
+
+### Unique Counter System
+
+The plugin uses **component-scoped counters** to ensure uniqueness:
+
+```jsx
+function FormComponent() {
+  return (
+    <div>
+      {" "}
+      {/* FormComponent.div */}
+      <div>First</div> {/* FormComponent.div2 */}
+      <div>Second</div> {/* FormComponent.div3 */}
+      <button>Save</button> {/* FormComponent.button */}
+      <button>Cancel</button> {/* FormComponent.button2 */}
+    </div>
+  );
+}
+```
+
+### JSX Member Expressions
+
+```jsx
+function ModalComponent() {
+  return (
+    <Modal.Container>
+      {" "}
+      {/* ModalComponent.Container */}
+      <Modal.Header>Title</Modal.Header> {/* ModalComponent.Header */}
+      <Modal.Body>Content</Modal.Body> {/* ModalComponent.Body */}
+      <Modal.Header>Second</Modal.Header> {/* ModalComponent.Header2 */}
+    </Modal.Container>
+  );
+}
+```
+
+### Class Components
+
+```jsx
+class TodoList extends React.Component {
+  render() {
+    return (
+      <div>
+        {" "}
+        {/* TodoList.div */}
+        <h2>My Todos</h2> {/* TodoList.h2 */}
+        <ul>
+          {" "}
+          {/* TodoList.ul */}
+          <li>Todo 1</li> {/* TodoList.li */}
+          <li>Todo 2</li> {/* TodoList.li2 */}
+        </ul>
+        <button>Add Todo</button> {/* TodoList.button */}
+      </div>
+    );
+  }
+}
+```
+
+### Conditional Rendering
+
+```jsx
+function ConditionalComponent({ isLoggedIn }) {
+  if (isLoggedIn) {
+    return <div>Welcome</div>; // ConditionalComponent.div
+  }
+  return <div>Please login</div>; // ConditionalComponent.div2
+}
+```
+
+## ⚙️ Configuration Options
+
+| Option       | Type       | Default           | Description                                 |
+| ------------ | ---------- | ----------------- | ------------------------------------------- |
+| `attributes` | `string[]` | `["data-testid"]` | Array of attribute names to add to elements |
+
+### Examples
+
+**Multiple testing frameworks:**
+
+```json
+{
+  "plugins": [
+    [
+      "babel-plugin-react-data-testid-generator",
+      {
+        "attributes": ["data-testid", "data-cy", "data-test-id"]
+      }
+    ]
+  ]
+}
+```
+
+**Cypress only:**
+
+```json
+{
+  "plugins": [
+    [
+      "babel-plugin-react-data-testid-generator",
+      {
+        "attributes": ["data-cy"]
+      }
+    ]
+  ]
+}
+```
+
+**Disable plugin:**
+
+```json
+{
+  "plugins": [
+    [
+      "babel-plugin-react-data-testid-generator",
+      {
+        "attributes": []
+      }
+    ]
+  ]
+}
+```
+
+## 🧪 Testing Integration
+
+### Jest + React Testing Library
+
+```javascript
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import UserCard from "./UserCard";
+
+test("should interact with generated test ids", async () => {
+  render(<UserCard name="John" />);
+
+  // Predictable test IDs
+  const followButton = screen.getByTestId("UserCard.button");
+  const messageButton = screen.getByTestId("UserCard.button2");
+
+  await userEvent.click(followButton);
+
+  expect(screen.getByTestId("UserCard.div")).toBeInTheDocument();
+});
+```
+
+### Cypress
+
+```javascript
+describe("UserCard Component", () => {
+  it("should interact with elements", () => {
+    cy.mount(<UserCard name="John" />);
+
+    // Use generated data-cy attributes
+    cy.get('[data-cy="UserCard.button"]').click();
+    cy.get('[data-cy="UserCard.button2"]').should("be.visible");
+  });
+});
+```
+
+### Playwright
+
+```javascript
+import { test, expect } from "@playwright/test";
+
+test("user card interactions", async ({ page }) => {
+  await page.goto("/user-profile");
+
+  // Reliable selectors with generated IDs
+  await page.locator('[data-testid="UserCard.button"]').click();
+  await expect(page.locator('[data-testid="UserCard.div"]')).toBeVisible();
+});
+```
+
+## 📁 Example Applications
+
+We provide two complete example applications demonstrating the plugin:
+
+### 🚀 Next.js Example
+
+```bash
+cd example/babelrc
+npm install
+npm run dev
+```
+
+**Features:**
+
+- Next.js 13+ with App Router
+- Beautiful modern UI with animations
+- Interactive components demonstrating test ID generation
+- Open [http://localhost:3000](http://localhost:3000)
+
+### ⚡ Vite Example
+
+```bash
+cd example/vite
+npm install
+npm run dev
+```
+
+**Features:**
+
+- Vite with React 18
+- Lightning-fast HMR
+- Same UI as Next.js example
+- Open [http://localhost:3001](http://localhost:3001)
+
+**Both examples include:**
+
+- ✅ Interactive forms and buttons
+- ✅ Modal components
+- ✅ Card layouts
+- ✅ Class and functional components
+- ✅ Conditional rendering
+- ✅ JSX member expressions
+
+**Inspect the DOM** to see the automatically generated `data-testid` attributes!
+
+## 🛠️ Supported React Patterns
+
+| Pattern                | Supported | Example                                        |
+| ---------------------- | --------- | ---------------------------------------------- |
+| Function Components    | ✅        | `function MyComponent() {}`                    |
+| Arrow Functions        | ✅        | `const MyComponent = () => {}`                 |
+| Class Components       | ✅        | `class MyComponent extends React.Component {}` |
+| Anonymous Exports      | ⚠️        | `export default () => {}` (skipped)            |
+| JSX Member Expressions | ✅        | `<Modal.Header>` → `ComponentName.Header`      |
+| Fragments              | ✅        | `<>` and `<React.Fragment>`                    |
+| Conditional Rendering  | ✅        | Multiple return statements                     |
+| Existing Attributes    | ✅        | Never overrides existing `data-testid`         |
+| Self-Closing Elements  | ✅        | `<img />`, `<input />`                         |
+| Nested Components      | ✅        | Deep nesting with unique counters              |
+
+## 🎯 Best Practices
+
+1. **🏷️ Use PascalCase** for component names to get predictable test IDs
+2. **🔍 Inspect Generated IDs** in development to understand the structure
+3. **🌍 Environment-Specific** - consider disabling in production:
+
+```javascript
+const isProd = process.env.NODE_ENV === "production";
+
+module.exports = {
+  plugins: [...(!isProd ? [["babel-plugin-react-data-testid-generator"]] : [])],
+};
+```
+
+4. **🧪 Test ID Patterns** - use consistent patterns in tests:
+   - `ComponentName.elementType` for first occurrence
+   - `ComponentName.elementType2` for second occurrence
+   - `ComponentName.MemberExpression` for JSX member expressions
+
+## 🔧 Development
+
+### Setup
+
+```bash
+git clone https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator.git
+cd babel-plugin-react-data-testid-generator
+yarn install
+```
+
+### Commands
+
+```bash
+yarn test              # Run tests
+yarn test:watch        # Run tests in watch mode
+yarn test:coverage     # Run tests with coverage
+yarn build            # Build the plugin
+yarn lint             # Lint code
+yarn fmt              # Format code
+```
+
+### Testing
+
+The plugin has comprehensive test coverage (96%+) including:
+
+- ✅ 62 test cases covering all React patterns
+- ✅ Snapshot testing for consistent output
+- ✅ Edge case handling
+- ✅ CI/CD with coverage thresholds
+
+## 🤝 Contributors
+
+<!-- Contributors will be listed here -->
+
+_No contributors yet. Be the first to contribute!_
+
+## 📄 License
+
+MIT © [Or Kazaz](https://github.com/Kazaz-Or)
+
+---
+
+## 🙏 Acknowledgments
+
+- Inspired by [babel-plugin-react-data-testid](https://github.com/akameco/babel-plugin-react-data-testid)
+- Built for the React testing community 💙
+
+**Made with ❤️ for better React testing**
