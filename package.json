@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-react-data-testid-generator",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Enhanced babel plugin for automatic React data-testid generation with unique IDs and class component support",
   "license": "MIT",
   "repository": "Kazaz-Or/babel-plugin-react-data-testid-generator",
