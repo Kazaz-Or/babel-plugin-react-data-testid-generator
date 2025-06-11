@@ -26,18 +26,40 @@ jobs:
   publish:
     name: 📦 Build & Publish Package
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' && github.actor == 'Kazaz-Or'
 
     steps:
-      - name: 🔒 Verify Release Branch
+      - name: 🔒 Verify Release Authorization
         run: |
-          if [[ "${{ github.ref_name }}" != "master" ]]; then
-            echo "❌ ERROR: Releases can only be created from the 'master' branch!"
-            echo "Current branch: ${{ github.ref_name }}"
-            echo "Please switch to master branch and try again."
+          # This step should never run if unauthorized, but just in case...
+          AUTHORIZED_USER="Kazaz-Or"
+
+          echo "🔍 Authorization Check:"
+          echo "  - Authorized user: $AUTHORIZED_USER"
+          echo "  - Current user: ${{ github.actor }}"
+          echo "  - Current branch: ${{ github.ref_name }}"
+
+          if [[ "${{ github.actor }}" != "$AUTHORIZED_USER" ]]; then
+            echo ""
+            echo "❌ UNAUTHORIZED ACCESS ATTEMPT!"
+            echo "Only $AUTHORIZED_USER is authorized to publish releases."
+            echo "Current user: ${{ github.actor }}"
+            echo ""
+            echo "🚨 This incident has been logged."
             exit 1
           fi
-          echo "✅ Confirmed: Running on master branch"
+
+          if [[ "${{ github.ref_name }}" != "master" ]]; then
+            echo ""
+            echo "❌ ERROR: Releases must be from master branch!"
+            echo "Current branch: ${{ github.ref_name }}"
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ User authorized: ${{ github.actor }}"
+          echo "✅ Branch verified: master"
+          echo "🚀 Proceeding with secure publish..."
       - name: 📂 Checkout Repository
         uses: actions/checkout@v4
         with:
