@@ -1,0 +1,60 @@
+name: 🤝 Add Contributors
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  add-contributor:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📂 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: 📦 Install All-Contributors CLI
+        run: npm install -g all-contributors-cli
+
+      - name: 🤝 Add Contributor
+        run: |
+          # Add the contributor
+          npx all-contributors add ${{ github.event.pull_request.user.login }} code
+
+          # Generate the updated README
+          npx all-contributors generate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📝 Create PR for Contributor Addition
+        if: steps.add-contributor.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: add @${{ github.event.pull_request.user.login }} as a contributor"
+          title: "🤝 Add @${{ github.event.pull_request.user.login }} as a contributor"
+          body: |
+            ## 🎉 New Contributor Alert!
+
+            Welcome @${{ github.event.pull_request.user.login }} to the contributors list! 
+
+            This PR was automatically generated to add them after their merged contribution in PR #${{ github.event.pull_request.number }}.
+
+            **Changes:**
+            - Added @${{ github.event.pull_request.user.login }} to the contributors section
+            - Updated .all-contributorsrc with their contribution details
+
+            **Contribution detected:** Based on the files changed in their PR
+
+            ---
+            *This PR was automatically created by the contributors workflow*
+          branch: contributors/add-${{ github.event.pull_request.user.login }}
+          delete-branch: true
