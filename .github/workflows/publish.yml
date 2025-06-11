@@ -1,0 +1,176 @@
+name: 📦 Publish to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: "Version bump type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+      dry_run:
+        description: "Dry run (test without publishing)"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: "22.16.0"
+
+jobs:
+  publish:
+    name: 📦 Build & Publish Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🧪 Run Tests
+        run: yarn test:coverage
+
+      - name: 🏗️ Build Package
+        run: yarn build
+
+      - name: 🔍 Get Current Version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "📍 Current version: $CURRENT_VERSION"
+
+      - name: 🔢 Bump Version
+        id: version_bump
+        run: |
+          if [[ "${{ inputs.version_type }}" == "prerelease" ]]; then
+            NEW_VERSION=$(npm version prerelease --preid=beta --no-git-tag-version)
+          else
+            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version)
+          fi
+
+          # Remove 'v' prefix that npm version adds
+          NEW_VERSION=${NEW_VERSION#v}
+
+          echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "🚀 New version: $NEW_VERSION"
+
+      - name: 🔍 Verify Build
+        run: |
+          echo "📋 Package contents:"
+          ls -la dist/
+
+          echo "📄 Package.json version:"
+          node -p "require('./package.json').version"
+
+          echo "🔍 Built files:"
+          file dist/*
+
+      - name: 🧹 Dry Run Check
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "🧪 DRY RUN MODE - No publishing will occur"
+          echo "📦 Would publish version: ${{ steps.version_bump.outputs.new }}"
+          npm pack --dry-run
+
+      - name: 📦 Publish to NPM
+        if: ${{ !inputs.dry_run }}
+        run: |
+          echo "🚀 Publishing version ${{ steps.version_bump.outputs.new }} to NPM..."
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🏷️ Create Git Tag
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Commit version bump
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.version_bump.outputs.new }}"
+
+          # Create and push tag
+          git tag -a "v${{ steps.version_bump.outputs.new }}" -m "Release v${{ steps.version_bump.outputs.new }}"
+          git push origin HEAD:${{ github.ref_name }}
+          git push origin "v${{ steps.version_bump.outputs.new }}"
+
+      - name: 🎉 Create GitHub Release
+        if: ${{ !inputs.dry_run }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "v${{ steps.version_bump.outputs.new }}"
+          release_name: "Release v${{ steps.version_bump.outputs.new }}"
+          body: |
+            ## 🎉 babel-plugin-react-data-testid-generator v${{ steps.version_bump.outputs.new }}
+
+            ### 📦 Installation
+            ```bash
+            npm install --save-dev babel-plugin-react-data-testid-generator@${{ steps.version_bump.outputs.new }}
+            # or
+            yarn add -D babel-plugin-react-data-testid-generator@${{ steps.version_bump.outputs.new }}
+            ```
+
+            ### 🔄 Changes
+            - Version bump from ${{ steps.current_version.outputs.current }} → ${{ steps.version_bump.outputs.new }}
+            - All tests passing ✅
+            - Built and published successfully 🚀
+
+            ### 📊 Package Stats
+            - **Size**: Check on [bundlephobia](https://bundlephobia.com/package/babel-plugin-react-data-testid-generator@${{ steps.version_bump.outputs.new }})
+            - **Downloads**: Check on [npm](https://www.npmjs.com/package/babel-plugin-react-data-testid-generator)
+
+            ---
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ steps.current_version.outputs.current }}...v${{ steps.version_bump.outputs.new }}
+          draft: false
+          prerelease: ${{ inputs.version_type == 'prerelease' }}
+
+      - name: 📋 Summary
+        run: |
+          echo "## 🎉 Publish Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            echo "### 🧪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
+            echo "- 📦 Would publish: **v${{ steps.version_bump.outputs.new }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- 🔄 Version bump: ${{ steps.current_version.outputs.current }} → ${{ steps.version_bump.outputs.new }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "> **Note**: This was a dry run. No actual publishing occurred." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### 🚀 Successfully Published!" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Published to NPM: **v${{ steps.version_bump.outputs.new }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- 🏷️ Git tag created: **v${{ steps.version_bump.outputs.new }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- 📝 GitHub release created" >> $GITHUB_STEP_SUMMARY
+            echo "- 🔄 Version bump: ${{ steps.current_version.outputs.current }} → ${{ steps.version_bump.outputs.new }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📦 Installation" >> $GITHUB_STEP_SUMMARY
+            echo '```bash' >> $GITHUB_STEP_SUMMARY
+            echo "npm install --save-dev babel-plugin-react-data-testid-generator@${{ steps.version_bump.outputs.new }}" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔗 Links" >> $GITHUB_STEP_SUMMARY
+            echo "- [NPM Package](https://www.npmjs.com/package/babel-plugin-react-data-testid-generator)" >> $GITHUB_STEP_SUMMARY
+            echo "- [GitHub Release](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version_bump.outputs.new }})" >> $GITHUB_STEP_SUMMARY
+          fi

@@ -24,13 +24,6 @@ jobs:
       - name: 📦 Install All-Contributors CLI
         run: npm install -g all-contributors-cli
 
-      - name: 🔍 Debug File Structure
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Files in current directory:"
-          ls -la
-          echo "README.md exists: $(test -f README.md && echo 'YES' || echo 'NO')"
-
       - name: 🤝 Add Contributor
         run: |
           # Check if contributor already exists
