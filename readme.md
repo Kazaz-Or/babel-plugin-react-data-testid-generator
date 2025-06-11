@@ -459,6 +459,5 @@ MIT © [Or Kazaz](https://github.com/Kazaz-Or)
 ## 🙏 Acknowledgments
 
 - Inspired by [babel-plugin-react-data-testid](https://github.com/akameco/babel-plugin-react-data-testid)
-- Built for the React testing community 💙
 
-**Made with ❤️ for better React testing**
+**Made with 💙 for better testing**
