@@ -453,7 +453,7 @@ Thanks to these wonderful people who have contributed to this project:
   <tr>
     <td align="center">
       <a href="https://github.com/Kazaz-Or">
-        <img src="https://github.com/Kazaz-Or.png?size=30" width="30px;" alt="Or Kazaz"/>
+        <img src="https://github.com/Kazaz-Or.png?size=40" width="40px;" alt="Or Kazaz"/>
         <br />
         <sub><b>Or Kazaz</b></sub>
       </a>
