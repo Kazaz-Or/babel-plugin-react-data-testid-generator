@@ -453,7 +453,7 @@ Thanks to these wonderful people who have contributed to this project:
   <tr>
     <td align="center">
       <a href="https://github.com/Kazaz-Or">
-        <img src="https://github.com/Kazaz-Or.png?size=100" width="100px;" alt="Or Kazaz"/>
+        <img src="https://github.com/Kazaz-Or.png?size=40" width="40px;" alt="Or Kazaz"/>
         <br />
         <sub><b>Or Kazaz</b></sub>
       </a>
@@ -479,7 +479,8 @@ We welcome contributions! Here are some ways you can help:
 - 🧪 **Add test cases**
 - 🔧 **Submit pull requests**
 
-#### Contribution Process
+<details>
+<summary><strong>📋 Contribution Process</strong></summary>
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -489,7 +490,10 @@ We welcome contributions! Here are some ways you can help:
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
-#### Adding Yourself as a Contributor
+</details>
+
+<details>
+<summary><strong>🤝 Adding Yourself as a Contributor</strong></summary>
 
 If you contribute to this project, you can add yourself to the contributors list:
 
@@ -497,7 +501,10 @@ If you contribute to this project, you can add yourself to the contributors list
 2. Add yourself: `all-contributors add <your-username> <contribution-type>`
 3. Update the README: `all-contributors generate`
 
-**Contribution Types:**
+</details>
+
+<details>
+<summary><strong>🏷️ Contribution Types</strong></summary>
 
 - 💻 `code` - Code contributions
 - 📖 `doc` - Documentation
@@ -507,6 +514,8 @@ If you contribute to this project, you can add yourself to the contributors list
 - 🎨 `design` - Design
 - 🚧 `maintenance` - Maintenance
 - 📦 `platform` - Packaging/platform support
+
+</details>
 
 ## 📄 License
 
