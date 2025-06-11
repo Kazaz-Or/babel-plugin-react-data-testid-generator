@@ -446,9 +446,67 @@ The plugin has comprehensive test coverage (96%+) including:
 
 ## 🤝 Contributors
 
-<!-- Contributors will be listed here -->
+Thanks to these wonderful people who have contributed to this project:
 
-_No contributors yet. Be the first to contribute!_
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Kazaz-Or">
+        <img src="https://github.com/Kazaz-Or.png?size=100" width="100px;" alt="Or Kazaz"/>
+        <br />
+        <sub><b>Or Kazaz</b></sub>
+      </a>
+      <br />
+      <a href="#maintenance-Kazaz-Or" title="Maintenance">🚧</a>
+      <a href="https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator/commits?author=Kazaz-Or" title="Code">💻</a>
+      <a href="#design-Kazaz-Or" title="Design">🎨</a>
+      <a href="https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator/commits?author=Kazaz-Or" title="Documentation">📖</a>
+      <a href="#ideas-Kazaz-Or" title="Ideas, Planning, & Feedback">🤔</a>
+    </td>
+  </tr>
+</table>
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+### How to Contribute
+
+We welcome contributions! Here are some ways you can help:
+
+- 🐛 **Report bugs** by opening an issue
+- 💡 **Suggest features** or improvements
+- 📖 **Improve documentation**
+- 🧪 **Add test cases**
+- 🔧 **Submit pull requests**
+
+#### Contribution Process
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes and add tests
+4. Ensure all tests pass (`yarn test`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+#### Adding Yourself as a Contributor
+
+If you contribute to this project, you can add yourself to the contributors list:
+
+1. Install the all-contributors CLI: `npm install -g all-contributors-cli`
+2. Add yourself: `all-contributors add <your-username> <contribution-type>`
+3. Update the README: `all-contributors generate`
+
+**Contribution Types:**
+
+- 💻 `code` - Code contributions
+- 📖 `doc` - Documentation
+- 🐛 `bug` - Bug reports
+- 💡 `ideas` - Ideas and suggestions
+- 🧪 `test` - Tests
+- 🎨 `design` - Design
+- 🚧 `maintenance` - Maintenance
+- 📦 `platform` - Packaging/platform support
 
 ## 📄 License
 
