@@ -26,8 +26,18 @@ jobs:
   publish:
     name: 📦 Build & Publish Package
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
+      - name: 🔒 Verify Release Branch
+        run: |
+          if [[ "${{ github.ref_name }}" != "master" ]]; then
+            echo "❌ ERROR: Releases can only be created from the 'master' branch!"
+            echo "Current branch: ${{ github.ref_name }}"
+            echo "Please switch to master branch and try again."
+            exit 1
+          fi
+          echo "✅ Confirmed: Running on master branch"
       - name: 📂 Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -107,6 +117,14 @@ jobs:
           # Commit version bump
           git add package.json
           git commit -m "chore: bump version to ${{ steps.version_bump.outputs.new }}"
+
+          # Check if tag already exists and fail if it does
+          if git rev-parse "v${{ steps.version_bump.outputs.new }}" >/dev/null 2>&1; then
+            echo "❌ ERROR: Tag v${{ steps.version_bump.outputs.new }} already exists!"
+            echo "Please choose a different version or delete the existing tag manually if needed."
+            echo "Existing tags: $(git tag -l)"
+            exit 1
+          fi
 
           # Create and push tag
           git tag -a "v${{ steps.version_bump.outputs.new }}" -m "Release v${{ steps.version_bump.outputs.new }}"
