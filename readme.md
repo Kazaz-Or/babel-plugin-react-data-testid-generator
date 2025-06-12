@@ -1,8 +1,10 @@
 # babel-plugin-react-data-testid-generator
 
-[![npm version](https://badge.fury.io/js/babel-plugin-react-data-testid-generator.svg)](https://badge.fury.io/js/babel-plugin-react-data-testid-generator)
+[![npm version](https://img.shields.io/npm/v/babel-plugin-react-data-testid-generator.svg)](https://www.npmjs.com/package/babel-plugin-react-data-testid-generator)
+[![npm downloads](https://img.shields.io/npm/dm/babel-plugin-react-data-testid-generator.svg)](https://www.npmjs.com/package/babel-plugin-react-data-testid-generator)
 [![Build Status](https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator/workflows/🔍%20PR%20Validations/badge.svg)](https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator/actions)
 [![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen.svg)](https://github.com/Kazaz-Or/babel-plugin-react-data-testid-generator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > 🧪 **Enhanced Babel plugin for automatic React data-testid generation with unique IDs and comprehensive component support**
 
